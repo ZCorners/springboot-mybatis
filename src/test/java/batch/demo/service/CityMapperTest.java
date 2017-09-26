@@ -38,7 +38,7 @@ public class CityMapperTest {
         cityMapper.findById(1l);
     }
 
-    // 4256ms
+    // simple: 4256ms(默认类型)
     @Test
     public void executeDefault() throws Exception {
         System.out.println(sqlSessionTemplate.getExecutorType()); // simple
@@ -46,6 +46,7 @@ public class CityMapperTest {
             City city = new City(i, "name" + i, "desc" + i);
             list.add(city);
             if (i % size == 0) {
+                // 拼接的sql过长会报错
                 cityMapper.insertBatch(list);
                 list.clear();
             }
@@ -53,13 +54,13 @@ public class CityMapperTest {
     }
 
     // batch: 4192ms
-    // simple: 10533ms，默认类型
+    // simple: 4219ms
     // reuse: 10158ms
     @Test
     public void executorTypeBatch() throws Exception {
         // 重新获取的sqlSession不会将数据写入数据库，需要手动commit
         // 对比不同的executorType
-        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH);
+        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
         CityMapper cityMapper = sqlSession.getMapper(CityMapper.class);
 
         for (long i = 1; i <= count; i++) {
@@ -75,10 +76,10 @@ public class CityMapperTest {
         sqlSession.close();
     }
 
-    // 很慢
+    // 很慢, 17662ms
     @Test
     public void insertOne() throws Exception {
-        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH);
+        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
         CityMapper cityMapper = sqlSession.getMapper(CityMapper.class);
 
         for (long i = 1; i <= count; i++) {
