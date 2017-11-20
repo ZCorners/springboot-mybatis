@@ -1,5 +1,6 @@
 package batch.demo.service;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,5 +92,11 @@ public class CityMapperTest {
             }
         }
         sqlSession.close();
+    }
+
+    @Test
+    public void getBidiMap() throws Exception {
+        HashMap hashMap = cityMapper.getCityMap();
+        System.out.println(hashMap);
     }
 }

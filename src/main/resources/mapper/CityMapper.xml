@@ -21,4 +21,9 @@
         </foreach>
     </insert>
 
+    <select id="getCityMap" resultType="java.util.HashMap">
+        SELECT *
+        FROM city
+    </select>
+
 </mapper>
